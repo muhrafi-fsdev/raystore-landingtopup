@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAYSTORE - Top Up Game Terpercaya</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- SweetAlert2 (Popups) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7c3aed', // Purple
+                        secondary: '#111827', // Dark Gray
+                        accent: '#10b981', // Emerald
+                        dark: '#0f172a',
+                        gold: '#f59e0b',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #ffffff;
+        }
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .item-card {
+            transition: all 0.3s ease;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+            border-color: #7c3aed;
+        }
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .selected-payment {
+            border: 2px solid #7c3aed;
+            background-color: rgba(124, 58, 237, 0.1);
+        }
+        .selected-nominal {
+            border: 2px solid #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        /* Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        .bg-clip-text-gold {
+            background: linear-gradient(to right, #fbfbfb, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Custom Scroll for Payment List */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #1f2937; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #7c3aed; 
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass-effect border-b border-gray-800 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <i class="fa-solid fa-bolt text-3xl text-primary animate-pulse"></i>
+                    <span class="font-bold text-2xl tracking-wider text-white">RAY<span class="text-primary">STORE</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#" class="hover:text-primary transition px-3 py-2 rounded-md text-sm font-medium">Beranda</a>
+                        <a href="#games" class="hover:text-primary transition px-3 py-2 rounded-md text-sm font-medium">Game</a>
+                        <a href="#membership-section" class="hover:text-primary transition px-3 py-2 rounded-md text-sm font-medium"><i class="fa-solid fa-crown text-gold"></i> Membership</a>
+                        <a href="#cek-transaksi" class="hover:text-primary transition px-3 py-2 rounded-md text-sm font-medium">Cek Transaksi</a>
+                    </div>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="hidden md:block">
+                    <div id="auth-container">
+                        <button onclick="loginWithGoogle()" class="bg-white text-gray-900 px-5 py-2 rounded-full font-semibold hover:bg-gray-200 transition flex items-center gap-2 shadow-lg">
+                            <i class="fa-brands fa-google text-red-500"></i> Masuk / Daftar
+                        </button>
+                    </div>
+                    <div id="user-container" class="hidden flex items-center gap-3">
+                        <!-- Points Display -->
+                        <div class="bg-gray-800 px-3 py-1 rounded-full border border-gray-600 flex items-center gap-2 cursor-pointer hover:bg-gray-700" onclick="redeemPointsModal()">
+                            <i class="fa-solid fa-coins text-yellow-400"></i>
+                            <span class="font-bold text-sm" id="user-points-display">0 Poin</span>
+                        </div>
+                        
+                        <div class="text-right">
+                            <p class="text-xs text-gray-400">Halo,</p>
+                            <p class="font-bold text-primary" id="username-display">Member</p>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Member&background=7c3aed&color=fff" class="w-10 h-10 rounded-full border-2 border-primary">
+                        <button onclick="logout()" class="text-red-400 hover:text-red-500 ml-2"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-gray-900" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-800">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-800">Beranda</a>
+                <a href="#games" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-800">Daftar Game</a>
+                <a href="#membership-section" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-800 text-yellow-400">Membership</a>
+                <a href="#cek-transaksi" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-800">Cek Transaksi</a>
+                <div class="mt-4 pt-4 border-t border-gray-800" id="mobile-auth-section">
+                    <button onclick="loginWithGoogle()" class="w-full text-left px-3 py-2 text-base font-medium text-white bg-primary rounded-md flex items-center gap-2">
+                        <i class="fa-brands fa-google"></i> Masuk dengan Google
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative bg-gray-900 overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+            <div class="absolute -top-20 -left-20 w-96 h-96 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+            <div class="absolute top-40 right-0 w-96 h-96 bg-accent rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 relative z-10">
+            <div class="text-center">
+                <span class="inline-block py-1 px-3 rounded-full bg-gray-800 border border-gray-700 text-primary text-sm font-semibold mb-6 animate-bounce">
+                    🔥 Promo Spesial Bulan Ini
+                </span>
+                <h1 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl mb-6">
+                    Top Up Game <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Murah & Cepat</span>
+                </h1>
+                <p class="mt-3 max-w-md mx-auto text-base text-gray-300 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                    Platform top up game termurah se-Indonesia. Tersedia Mobile Legends, PUBG, FF, Steam Wallet, dan Aplikasi Premium.
+                </p>
+                <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8 gap-4">
+                    <div class="rounded-md shadow">
+                        <a href="#games" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-purple-700 md:py-4 md:text-lg transition">
+                            Mulai Top Up
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEWS & PROMO UPDATE SECTION -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[-3rem] relative z-20 mb-12">
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fa-regular fa-newspaper text-accent"></i> News & Promo Update</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- News Card 1 -->
+            <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-gray-700 hover:border-primary transition group">
+                <div class="h-40 bg-gray-700 relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">HOT PROMO</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-white mb-2">Diskon Spesial Akhir Tahun</h3>
+                    <p class="text-gray-400 text-sm">Dapatkan potongan harga hingga 50% untuk semua game mobile khusus member Elite ke atas.</p>
+                </div>
+            </div>
+            <!-- News Card 2 -->
+            <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-gray-700 hover:border-primary transition group">
+                <div class="h-40 bg-gray-700 relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">EVENT</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-white mb-2">Turnamen RAYSTORE Cup</h3>
+                    <p class="text-gray-400 text-sm">Ikuti turnamen MLBB berhadiah total Rp 10 Juta! Pendaftaran dibuka untuk member Pro & Sultan.</p>
+                </div>
+            </div>
+            <!-- News Card 3 -->
+            <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-gray-700 hover:border-primary transition group">
+                <div class="h-40 bg-gray-700 relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">UPDATE</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-white mb-2">Game Baru: Honor of Kings</h3>
+                    <p class="text-gray-400 text-sm">Top up token HoK kini tersedia dengan harga termurah. Cek katalog sekarang!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Banner -->
+    <div class="bg-gray-800 border-y border-gray-700">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 gap-8 md:grid-cols-4 text-center">
+                <div>
+                    <i class="fa-solid fa-clock text-3xl text-primary mb-2"></i>
+                    <h3 class="font-bold">Proses 1 Detik</h3>
+                    <p class="text-xs text-gray-400">Otomatis 24 Jam</p>
+                </div>
+                <div>
+                    <i class="fa-solid fa-shield-halved text-3xl text-primary mb-2"></i>
+                    <h3 class="font-bold">100% Legal</h3>
+                    <p class="text-xs text-gray-400">Aman Anti Banned</p>
+                </div>
+                <div>
+                    <i class="fa-solid fa-headset text-3xl text-primary mb-2"></i>
+                    <h3 class="font-bold">CS Responsif</h3>
+                    <p class="text-xs text-gray-400">Siap Membantu</p>
+                </div>
+                <div>
+                    <i class="fa-solid fa-tags text-3xl text-primary mb-2"></i>
+                    <h3 class="font-bold">Harga Termurah</h3>
+                    <p class="text-xs text-gray-400">Banyak Diskon</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Category -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12" id="games">
+        <h2 class="text-2xl font-bold mb-6 border-l-4 border-primary pl-4">Pilih Game / Aplikasi</h2>
+        
+        <div class="flex space-x-2 overflow-x-auto pb-4 scroll-hide mb-6" id="category-filter">
+            <button onclick="filterGames('all')" class="filter-btn active px-6 py-2 rounded-full bg-primary text-white text-sm font-semibold whitespace-nowrap transition">Semua</button>
+            <button onclick="filterGames('mobile')" class="filter-btn px-6 py-2 rounded-full bg-gray-800 text-gray-400 hover:bg-gray-700 text-sm font-semibold whitespace-nowrap transition">Mobile Game</button>
+            <button onclick="filterGames('pc')" class="filter-btn px-6 py-2 rounded-full bg-gray-800 text-gray-400 hover:bg-gray-700 text-sm font-semibold whitespace-nowrap transition">PC & Steam</button>
+            <button onclick="filterGames('app')" class="filter-btn px-6 py-2 rounded-full bg-gray-800 text-gray-400 hover:bg-gray-700 text-sm font-semibold whitespace-nowrap transition">Apps Premium</button>
+        </div>
+
+        <!-- Games Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6" id="games-container">
+            <!-- Content Injected by JS -->
+        </div>
+    </div>
+
+    <!-- MEMBERSHIP SECTION -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20" id="membership-section">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-white mb-2">Upgrade Keanggotaan</h2>
+            <p class="text-gray-400">Nikmati diskon eksklusif dan poin reward lebih besar dengan menjadi member VIP.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- PRO TIER -->
+            <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 transition relative overflow-hidden group">
+                <div class="absolute top-0 right-0 bg-blue-600 w-20 h-20 rounded-bl-full -mr-10 -mt-10 opacity-20 group-hover:opacity-100 transition"></div>
+                <h3 class="text-xl font-bold text-blue-400 mb-2">PRO</h3>
+                <div class="text-3xl font-bold text-white mb-4">Rp 25.000 <span class="text-sm font-normal text-gray-500">/bulan</span></div>
+                <ul class="text-sm text-gray-400 space-y-3 mb-6">
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-500"></i> Diskon 2% All Item</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-500"></i> Prioritas CS</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-500"></i> Bonus 20 Poin</li>
+                </ul>
+                <button onclick="upgradeMember('Pro', 25000)" class="w-full py-2 rounded-lg border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white transition font-bold">Pilih Paket</button>
+            </div>
+
+            <!-- ELITE TIER -->
+            <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-purple-500 transition relative overflow-hidden group">
+                <div class="absolute top-0 right-0 bg-purple-600 w-20 h-20 rounded-bl-full -mr-10 -mt-10 opacity-20 group-hover:opacity-100 transition"></div>
+                <h3 class="text-xl font-bold text-purple-400 mb-2">ELITE</h3>
+                <div class="text-3xl font-bold text-white mb-4">Rp 40.000 <span class="text-sm font-normal text-gray-500">/bulan</span></div>
+                <ul class="text-sm text-gray-400 space-y-3 mb-6">
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Diskon 5% All Item</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Akses Event Spesial</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Bonus 50 Poin</li>
+                </ul>
+                <button onclick="upgradeMember('Elite', 40000)" class="w-full py-2 rounded-lg border border-purple-500 text-purple-400 hover:bg-purple-600 hover:text-white transition font-bold">Pilih Paket</button>
+            </div>
+
+            <!-- SULTAN TIER -->
+            <div class="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl p-6 border border-yellow-600 transform scale-105 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
+                <div class="absolute top-2 right-2 text-yellow-500"><i class="fa-solid fa-crown text-2xl"></i></div>
+                <h3 class="text-xl font-bold text-yellow-400 mb-2">SULTAN</h3>
+                <div class="text-3xl font-bold text-white mb-4">Rp 99.000 <span class="text-sm font-normal text-gray-500">/bulan</span></div>
+                <ul class="text-sm text-gray-300 space-y-3 mb-6">
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-500"></i> Diskon 10% All Item</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-500"></i> Proses Kilat (VIP)</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-500"></i> Bonus 150 Poin</li>
+                </ul>
+                <button onclick="upgradeMember('Sultan', 99000)" class="w-full py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-700 text-white hover:from-yellow-600 hover:to-yellow-800 transition font-bold shadow-lg">Pilih Paket</button>
+            </div>
+
+            <!-- GAMERS TIER -->
+            <div class="bg-black rounded-2xl p-6 border border-red-600 hover:border-red-500 transition relative overflow-hidden group">
+                <div class="absolute top-0 right-0 bg-red-600 w-24 h-24 rounded-bl-full -mr-12 -mt-12 opacity-30 group-hover:opacity-60 transition"></div>
+                <h3 class="text-xl font-bold text-red-500 mb-2">GAMERS</h3>
+                <div class="text-3xl font-bold text-white mb-4">Rp 249.000 <span class="text-sm font-normal text-gray-500">/life</span></div>
+                <ul class="text-sm text-gray-400 space-y-3 mb-6">
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-red-500"></i> Diskon 15% Lifetime</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-red-500"></i> Personal Manager</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-red-500"></i> Bonus 500 Poin</li>
+                </ul>
+                <button onclick="upgradeMember('Gamers', 249000)" class="w-full py-2 rounded-lg border border-red-600 text-red-500 hover:bg-red-600 hover:text-white transition font-bold">Pilih Paket</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CEK TRANSAKSI SECTION -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20" id="cek-transaksi">
+        <div class="bg-gray-800 rounded-2xl p-6 md:p-10 border border-gray-700 shadow-xl">
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-1 w-full">
+                    <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass-dollar text-primary"></i> Cek Transaksi
+                    </h2>
+                    <p class="text-gray-400 mb-6">Lacak status top up Anda dengan memasukkan Nomor Invoice.</p>
+                    
+                    <div class="flex flex-col gap-4">
+                        <div class="relative">
+                            <input type="text" id="invoice-input" placeholder="Contoh: INV-123456" class="w-full bg-gray-900 border border-gray-600 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:border-primary transition text-white">
+                            <i class="fa-solid fa-receipt absolute left-4 top-4 text-gray-500"></i>
+                        </div>
+                        <button onclick="checkTransaction()" class="w-full bg-primary hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition shadow-lg">
+                            Cek Status
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex-1 w-full bg-gray-900 p-6 rounded-xl border border-dashed border-gray-700 hidden" id="transaction-result">
+                    <h3 class="text-lg font-bold mb-4 text-center border-b border-gray-700 pb-2">Detail Transaksi</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Nomor Invoice</span>
+                            <span class="font-mono font-bold text-primary" id="res-invoice">INV-XXXXX</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Item</span>
+                            <span class="text-white text-right" id="res-item">Item Name</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">ID User</span>
+                            <span class="text-white" id="res-userid">123456</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Status</span>
+                            <span class="px-2 py-0.5 rounded text-xs font-bold" id="res-status">PENDING</span>
+                        </div>
+                        <hr class="border-gray-700 my-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">Total</span>
+                            <span class="text-xl font-bold text-accent" id="res-total">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Promo Banner (Visible if not logged in) -->
+    <div id="login-promo" class="max-w-7xl mx-auto px-4 mt-16">
+        <div class="bg-gradient-to-r from-purple-900 to-gray-900 rounded-2xl p-8 md:p-12 relative overflow-hidden border border-purple-800">
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between">
+                <div class="text-left mb-6 md:mb-0">
+                    <h2 class="text-3xl font-bold text-white mb-2">Dapatkan Harga Lebih Murah!</h2>
+                    <p class="text-gray-300">Login sekarang untuk membuka harga reseller dan promo eksklusif.</p>
+                </div>
+                <button onclick="loginWithGoogle()" class="bg-white text-primary font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition shadow-lg">
+                    Login Sekarang
+                </button>
+            </div>
+            <i class="fa-solid fa-gamepad absolute -bottom-10 -right-10 text-9xl text-white opacity-5 rotate-12"></i>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 mt-20">
+        <div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-bolt text-2xl text-primary"></i>
+                        <span class="font-bold text-xl">RAYSTORE</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Raystore adalah platform top up game termurah, tercepat, dan terpercaya di Indonesia. Melayani pembayaran via Bank, E-Wallet, dan Minimarket.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-white">Dukungan</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-primary">Hubungi Kami</a></li>
+                        <li><a href="#" class="hover:text-primary">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="hover:text-primary">Syarat & Ketentuan</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-white">Metode Pembayaran</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="bg-white p-1 rounded w-12 h-8 flex items-center justify-center"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/QRIS_logo.svg/1200px-QRIS_logo.svg.png" class="max-h-full"></div>
+                        <div class="bg-white p-1 rounded w-12 h-8 flex items-center justify-center"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/2560px-Gopay_logo.svg.png" class="max-h-full"></div>
+                        <div class="bg-white p-1 rounded w-12 h-8 flex items-center justify-center"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/2560px-Logo_dana_blue.svg.png" class="max-h-full"></div>
+                        <div class="bg-white p-1 rounded w-12 h-8 flex items-center justify-center"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" class="max-h-full"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
+                &copy; 2024 RAYSTORE. All rights reserved. Created for GitHub Pages.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ORDER MODAL (Hidden by default) -->
+    <div id="order-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-black bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-gray-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full border border-gray-700">
+                <div class="bg-gray-800 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-gray-700">
+                    <h3 class="text-lg leading-6 font-medium text-white flex items-center gap-2" id="modal-game-title"></h3>
+                    <button type="button" class="text-gray-400 hover:text-white" onclick="closeModal()">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div class="px-4 py-5 sm:p-6 text-white overflow-y-auto max-h-[70vh]">
+                    <form id="topup-form" onsubmit="event.preventDefault(); processPayment();">
+                        <div class="mb-6">
+                            <h4 class="flex items-center gap-2 text-lg font-bold mb-3">
+                                <span class="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                                Masukkan Data Akun
+                            </h4>
+                            <div class="grid grid-cols-2 gap-4" id="input-fields">
+                                <input type="text" id="user-id" placeholder="User ID" class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 w-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition" required>
+                                <input type="text" id="zone-id" placeholder="Zone ID (Optional)" class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 w-full focus:outline-none focus:border-primary transition">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2 italic">*Untuk Steam/Apps cukup masukkan Email/Username</p>
+                        </div>
+                        <div class="mb-6">
+                            <h4 class="flex items-center gap-2 text-lg font-bold mb-3">
+                                <span class="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+                                Pilih Nominal
+                            </h4>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="nominal-container"></div>
+                        </div>
+                        <div class="mb-6">
+                            <h4 class="flex items-center gap-2 text-lg font-bold mb-3">
+                                <span class="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">3</span>
+                                Metode Pembayaran
+                            </h4>
+                            <div class="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scroll">
+                                <!-- QRIS -->
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'QRIS')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/QRIS_logo.svg/1200px-QRIS_logo.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">QRIS (All Payment)</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                
+                                <!-- E-Wallets -->
+                                <p class="text-xs text-gray-500 font-bold mt-2">E-Wallet</p>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'DANA')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/2560px-Logo_dana_blue.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">DANA</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'GoPay')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/2560px-Gopay_logo.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">GoPay</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'OVO')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12 flex items-center justify-center"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/2560px-Logo_ovo_purple.svg.png" class="max-h-4"></div>
+                                        <span class="font-medium text-sm">OVO</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'ShopeePay')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/2560px-Shopee.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">ShopeePay</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'LinkAja')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/LinkAja.svg/2048px-LinkAja.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">LinkAja</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+
+                                <!-- Virtual Accounts -->
+                                <p class="text-xs text-gray-500 font-bold mt-2">Virtual Account</p>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'BCA VA')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/2560px-Bank_Central_Asia.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">BCA Virtual Account</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'Mandiri VA')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/2560px-Bank_Mandiri_logo_2016.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">Mandiri Virtual Account</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'BNI VA')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Negara_Indonesia_logo_2015.svg/2560px-Bank_Negara_Indonesia_logo_2015.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">BNI Virtual Account</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'BRI VA')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/BRI_2020.svg/2560px-BRI_2020.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">BRI Virtual Account</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+
+                                <!-- Minimarket -->
+                                <p class="text-xs text-gray-500 font-bold mt-2">Minimarket</p>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'Indomaret')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Logo_Indomaret.png/1200px-Logo_Indomaret.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">Indomaret</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'Alfamart')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Alfamart_logo.svg/2560px-Alfamart_logo.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">Alfamart</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                
+                                <!-- Pulsa -->
+                                <p class="text-xs text-gray-500 font-bold mt-2">Pulsa Mobile</p>
+                                <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'Telkomsel')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Telkomsel_2021_icon.svg/1200px-Telkomsel_2021_icon.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">Telkomsel</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                                 <div class="payment-item p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition flex justify-between items-center" onclick="selectPayment(this, 'XL Axiata')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-white p-1 rounded w-12"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/XL_Axiata_logo_2020.svg/1200px-XL_Axiata_logo_2020.svg.png" class="w-full"></div>
+                                        <span class="font-medium text-sm">XL Axiata</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Otomatis</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 sticky bottom-0">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-gray-400">Total Pembayaran</span>
+                                <span class="text-2xl font-bold text-accent" id="total-price">Rp 0</span>
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-lg flex justify-center items-center gap-2">
+                                <i class="fa-solid fa-cart-shopping"></i> Beli Sekarang
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STATE ---
+        let isLoggedIn = false;
+        let selectedGame = null;
+        let selectedNominal = null;
+        let selectedPaymentMethod = null;
+        
+        // --- NEW STATE: Membership & Points ---
+        let memberTier = 'Member'; // Member, Pro, Elite, Sultan, Gamers
+        let userPoints = 0;
+
+        // --- GAME DATABASE (UPDATED WITH ACCURATE LOGOS) ---
+        const games = [
+            // MOBILE
+            { id: 1, name: 'Mobile Legends', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/2/23/Mobile_Legends_Bang_Bang_logo.png/250px-Mobile_Legends_Bang_Bang_logo.png', items: [
+                { name: '86 Diamonds', price: 20000, memberPrice: 18500 },
+                { name: '172 Diamonds', price: 40000, memberPrice: 38000 },
+                { name: '257 Diamonds', price: 60000, memberPrice: 57000 },
+                { name: 'Weekly Diamond Pass', price: 28000, memberPrice: 26500 },
+                { name: 'Twilight Pass', price: 150000, memberPrice: 145000 },
+            ]},
+            { id: 2, name: 'Free Fire', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/2/21/Garena_Free_Fire_Logo.png/250px-Garena_Free_Fire_Logo.png', items: [
+                { name: '70 Diamonds', price: 10000, memberPrice: 9500 },
+                { name: '140 Diamonds', price: 20000, memberPrice: 19000 },
+                { name: '355 Diamonds', price: 50000, memberPrice: 48000 },
+                { name: 'Membership Mingguan', price: 30000, memberPrice: 28500 },
+            ]},
+            { id: 3, name: 'PUBG Mobile', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/45/PUBG_Mobile_Logo.png/250px-PUBG_Mobile_Logo.png', items: [
+                { name: '60 UC', price: 15000, memberPrice: 14000 },
+                { name: '325 UC', price: 75000, memberPrice: 72000 },
+                { name: '660 UC', price: 150000, memberPrice: 145000 },
+            ]},
+            { id: 4, name: 'Genshin Impact', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Genshin_Impact_logo.svg/1200px-Genshin_Impact_logo.svg.png', items: [
+                { name: '60 Genesis', price: 16000, memberPrice: 15000 },
+                { name: 'Welkin Moon', price: 80000, memberPrice: 75000 },
+                { name: '1980 Genesis', price: 480000, memberPrice: 470000 },
+            ]},
+            
+            // PC / STEAM
+            { id: 5, name: 'Steam Wallet IDR', category: 'pc', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2048px-Steam_icon_logo.svg.png', items: [
+                { name: 'IDR 12.000', price: 15000, memberPrice: 13500 },
+                { name: 'IDR 45.000', price: 50000, memberPrice: 48000 },
+                { name: 'IDR 90.000', price: 98000, memberPrice: 95000 },
+                { name: 'IDR 250.000', price: 265000, memberPrice: 260000 },
+            ]},
+            { id: 6, name: 'Valorant', category: 'pc', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Valorant_logo_-_pink_color_version.svg/1200px-Valorant_logo_-_pink_color_version.svg.png', items: [
+                { name: '375 Points', price: 50000, memberPrice: 48000 },
+                { name: '1350 Points', price: 150000, memberPrice: 145000 },
+                { name: '2400 Points', price: 250000, memberPrice: 245000 },
+            ]},
+
+            // APPS
+            { id: 7, name: 'Spotify Premium', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png', items: [
+                { name: '1 Bulan Individual', price: 55000, memberPrice: 50000 },
+                { name: '3 Bulan Individual', price: 165000, memberPrice: 150000 },
+                { name: 'Family Plan', price: 89000, memberPrice: 85000 },
+            ]},
+            { id: 8, name: 'Netflix', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1200px-Netflix_2015_logo.svg.png', items: [
+                { name: 'Mobile 1 Bulan', price: 54000, memberPrice: 52000 },
+                { name: 'Premium 1 Bulan', price: 186000, memberPrice: 180000 },
+            ]},
+             { id: 9, name: 'Vidio Premier', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Vidio_logo_2023.svg/640px-Vidio_logo_2023.svg.png', items: [
+                { name: 'Platinum 30 Hari', price: 30000, memberPrice: 28000 },
+                { name: 'Diamond 30 Hari', price: 79000, memberPrice: 75000 },
+            ]},
+             { id: 10, name: 'Roblox', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Roblox_Logo_2022.jpg/1200px-Roblox_Logo_2022.jpg', items: [
+                { name: '80 Robux', price: 15000, memberPrice: 14000 },
+                { name: '400 Robux', price: 75000, memberPrice: 70000 },
+            ]},
+            
+            // NEW GAMES (From Previous Request)
+            { id: 11, name: 'Minecraft', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/5/51/Minecraft_cover.png/220px-Minecraft_cover.png', items: [
+                { name: '320 Minecoins', price: 35000, memberPrice: 33000 },
+                { name: '1020 Minecoins', price: 110000, memberPrice: 105000 },
+            ]},
+             { id: 12, name: 'Samkok Fantasy', category: 'mobile', img: 'https://play-lh.googleusercontent.com/yv6P2QJ7rXzE9pS9y0xX9uX9uX9uX9uX9uX9uX9uX9uX9uX9uX9uX9uX9uX9uX9u=s180-rw', items: [
+                { name: '60 Jade', price: 15000, memberPrice: 14000 },
+                { name: '300 Jade', price: 75000, memberPrice: 72000 },
+            ]},
+             { id: 13, name: 'Arena of Valor', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/67/Arena_of_Valor_Logo.png/250px-Arena_of_Valor_Logo.png', items: [
+                { name: '40 Vouchers', price: 10000, memberPrice: 9500 },
+                { name: '90 Vouchers', price: 20000, memberPrice: 19000 },
+            ]},
+             { id: 14, name: 'Honor of Kings', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/3/36/Honor_of_Kings_logo.png/220px-Honor_of_Kings_logo.png', items: [
+                { name: '80 Tokens', price: 15000, memberPrice: 14000 },
+                { name: '240 Tokens', price: 45000, memberPrice: 43000 },
+            ]},
+             { id: 15, name: 'Bstation (Bilibili)', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Bilibili_logo.svg/512px-Bilibili_logo.svg.png', items: [
+                { name: 'Premium 1 Bulan', price: 25000, memberPrice: 23000 },
+                { name: 'Premium 1 Tahun', price: 250000, memberPrice: 240000 },
+            ]},
+             { id: 16, name: 'iQIYI', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/IQIYI_Logo.svg/512px-IQIYI_Logo.svg.png', items: [
+                { name: 'VIP Standard 1 Bulan', price: 39000, memberPrice: 37000 },
+                { name: 'VIP Premium 1 Bulan', price: 59000, memberPrice: 55000 },
+            ]},
+             { id: 17, name: 'LifeAfter', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/7/76/LifeAfter_cover_art.jpg/220px-LifeAfter_cover_art.jpg', items: [
+                { name: '60 Credits', price: 15000, memberPrice: 14500 },
+                { name: '300 Credits', price: 75000, memberPrice: 72000 },
+            ]},
+             { id: 18, name: 'Pokémon UNITE', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Pok%C3%A9mon_UNITE_logo.svg/512px-Pok%C3%A9mon_UNITE_logo.svg.png', items: [
+                { name: '60 Aeos Gems', price: 16000, memberPrice: 15000 },
+                { name: '245 Aeos Gems', price: 65000, memberPrice: 62000 },
+            ]},
+             { id: 19, name: 'Racing Master', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Racing_Master_logo.jpg/640px-Racing_Master_logo.jpg', items: [
+                { name: '60 Diamonds', price: 15000, memberPrice: 14000 },
+                { name: '300 Diamonds', price: 75000, memberPrice: 72000 },
+            ]},
+             { id: 20, name: 'WeTV', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/WeTV_logo.svg/512px-WeTV_logo.svg.png', items: [
+                { name: 'VIP 1 Bulan', price: 25000, memberPrice: 23000 },
+                { name: 'VIP 3 Bulan', price: 69000, memberPrice: 65000 },
+            ]},
+             { id: 21, name: 'YouTube Premium', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png', items: [
+                { name: 'Individual 1 Bulan', price: 59000, memberPrice: 55000 },
+                { name: 'Family 1 Bulan', price: 99000, memberPrice: 95000 },
+            ]},
+            
+            // --- NEW ADDITIONS (Latest Request) ---
+            { id: 22, name: 'Honkai: Star Rail', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/9/90/Honkai_Star_Rail_icon.png/220px-Honkai_Star_Rail_icon.png', items: [
+                { name: '60 Oneiric Shard', price: 16000, memberPrice: 15000 },
+                { name: '330 Oneiric Shard', price: 79000, memberPrice: 76000 },
+                { name: 'Express Supply Pass', price: 80000, memberPrice: 77000 },
+            ]},
+            { id: 23, name: 'Zenless Zone Zero', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/2/23/Zenless_Zone_Zero.png/250px-Zenless_Zone_Zero.png', items: [
+                { name: '60 Monochrome', price: 16000, memberPrice: 15000 },
+                { name: '330 Monochrome', price: 79000, memberPrice: 76000 },
+                { name: 'Inter-Knot Membership', price: 80000, memberPrice: 77000 },
+            ]},
+            { id: 24, name: 'Blood Strike', category: 'mobile', img: 'https://play-lh.googleusercontent.com/yFzXmJ3zN9gU2wJz_gJz_gJz_gJz_gJz_gJz_gJz_gJz_gJz_gJz_gJz_gJz_gJz_g=w240-h480-rw', items: [
+                { name: '100 Gold', price: 14000, memberPrice: 13000 },
+                { name: '500 Gold', price: 70000, memberPrice: 68000 },
+            ]},
+             { id: 25, name: 'Honkai Impact 3', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/63/Honkai_Impact_3rd_logo.png/220px-Honkai_Impact_3rd_logo.png', items: [
+                { name: '65 Crystals', price: 16000, memberPrice: 15000 },
+                { name: '330 Crystals', price: 79000, memberPrice: 76000 },
+                { name: 'Monthly Card', price: 80000, memberPrice: 77000 },
+            ]},
+            { id: 26, name: 'Call of Duty Mobile', category: 'mobile', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Call_of_Duty_Mobile_Logo.png/220px-Call_of_Duty_Mobile_Logo.png', items: [
+                { name: '53 CP', price: 10000, memberPrice: 9500 },
+                { name: '320 CP', price: 50000, memberPrice: 48000 },
+                { name: '640 CP', price: 100000, memberPrice: 97000 },
+            ]},
+            { id: 27, name: 'Garena Shells', category: 'pc', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Garena_logo_2017.svg/1200px-Garena_logo_2017.svg.png', items: [
+                { name: '33 Shells', price: 10000, memberPrice: 9500 },
+                { name: '66 Shells', price: 20000, memberPrice: 19000 },
+                { name: '165 Shells', price: 50000, memberPrice: 48000 },
+                { name: '330 Shells', price: 100000, memberPrice: 98000 },
+            ]},
+            { id: 28, name: 'GeForce NOW', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/GeForce_Now_logo.svg/1200px-GeForce_Now_logo.svg.png', items: [
+                { name: '1 Day Pass', price: 15000, memberPrice: 14000 },
+                { name: '1 Month Priority', price: 150000, memberPrice: 145000 },
+            ]},
+            { id: 29, name: 'Google Play Voucher', category: 'app', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Google_Play_Arrow_logo.svg/1200px-Google_Play_Arrow_logo.svg.png', items: [
+                { name: 'IDR 20.000', price: 22000, memberPrice: 21000 },
+                { name: 'IDR 50.000', price: 52000, memberPrice: 51000 },
+                { name: 'IDR 100.000', price: 102000, memberPrice: 101000 },
+            ]},
+        ];
+
+        // --- CORE FUNCTIONS ---
+
+        // 1. Render Games
+        function renderGames(filter = 'all') {
+            const container = document.getElementById('games-container');
+            container.innerHTML = '';
+
+            const filteredGames = filter === 'all' 
+                ? games 
+                : games.filter(g => g.category === filter);
+
+            filteredGames.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'item-card bg-gray-800 rounded-xl overflow-hidden cursor-pointer relative group border border-gray-700 flex flex-col items-center justify-center p-4';
+                card.onclick = () => openModal(game);
+                
+                card.innerHTML = `
+                    <div class="relative w-full h-32 sm:h-40 flex items-center justify-center mb-2">
+                        <img src="${game.img}" alt="${game.name}" 
+                             onerror="this.src='https://placehold.co/400x400/1e293b/7c3aed?text=${encodeURIComponent(game.name)}'"
+                             class="w-full h-full object-contain p-2 transition duration-500 group-hover:scale-110 drop-shadow-lg">
+                    </div>
+                    <div class="text-center w-full z-10">
+                         <h3 class="font-bold text-white text-md truncate">${game.name}</h3>
+                         <p class="text-xs text-primary font-semibold mt-1">
+                            ${game.category === 'mobile' ? '<i class="fa-solid fa-mobile-screen"></i> Mobile' : 
+                              game.category === 'pc' ? '<i class="fa-solid fa-desktop"></i> PC' : 
+                              '<i class="fa-solid fa-star"></i> App'}
+                         </p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-gray-800', 'text-gray-400');
+            });
+            const activeBtn = Array.from(document.querySelectorAll('.filter-btn'))
+                .find(b => b.textContent.toLowerCase().includes(filter === 'all' ? 'semua' : filter) || 
+                           (filter === 'app' && b.textContent.includes('Apps')));
+            
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-gray-800', 'text-gray-400');
+                activeBtn.classList.add('bg-primary', 'text-white');
+            }
+        }
+
+        function filterGames(category) {
+            renderGames(category);
+        }
+
+        // 2. Authentication Logic
+        function loginWithGoogle() {
+            Swal.fire({
+                title: 'Menghubungkan ke Google...',
+                html: 'Mohon tunggu sebentar',
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: () => Swal.showLoading()
+            }).then(() => {
+                isLoggedIn = true;
+                // Retrieve or init points
+                const savedPoints = localStorage.getItem('userPoints');
+                userPoints = savedPoints ? parseInt(savedPoints) : 0;
+                // Retrieve or init Tier
+                const savedTier = localStorage.getItem('memberTier');
+                memberTier = savedTier ? savedTier : 'Member';
+
+                updateUIForAuth();
+                Swal.fire({
+                    icon: 'success', title: 'Berhasil Login!', 
+                    text: `Selamat datang, ${memberTier}. Diskon telah diaktifkan!`,
+                    background: '#1f2937', color: '#fff'
+                });
+            });
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            updateUIForAuth();
+            localStorage.removeItem('user'); 
+            // Note: In a real app we might clear points too, 
+            // but for demo retention we keep them or clear them.
+            // Let's clear visual state but data persists in localStorage for demo
+        }
+
+        function updateUIForAuth() {
+            const authContainer = document.getElementById('auth-container');
+            const userContainer = document.getElementById('user-container');
+            const mobileAuth = document.getElementById('mobile-auth-section');
+            const loginPromo = document.getElementById('login-promo');
+            
+            // Update UI Elements for Points and Tier
+            const usernameDisplay = document.getElementById('username-display');
+            const pointsDisplay = document.getElementById('user-points-display');
+
+            if (isLoggedIn) {
+                authContainer.classList.add('hidden');
+                userContainer.classList.remove('hidden');
+                userContainer.classList.add('flex');
+                loginPromo.style.display = 'none';
+
+                // Set Text
+                usernameDisplay.innerText = memberTier;
+                pointsDisplay.innerText = `${userPoints} Poin`;
+
+                // Add special coloring for Tiers
+                if(memberTier === 'Sultan' || memberTier === 'Gamers') {
+                    usernameDisplay.classList.add('text-gold');
+                    usernameDisplay.classList.remove('text-primary');
+                } else {
+                    usernameDisplay.classList.add('text-primary');
+                    usernameDisplay.classList.remove('text-gold');
+                }
+
+                mobileAuth.innerHTML = `
+                    <div class="flex items-center gap-3 px-3 py-2 text-white">
+                        <img src="https://ui-avatars.com/api/?name=${memberTier}&background=7c3aed&color=fff" class="w-8 h-8 rounded-full">
+                        <div>
+                            <p class="font-bold ${memberTier === 'Sultan' || memberTier === 'Gamers' ? 'text-yellow-400' : ''}">${memberTier}</p>
+                            <p class="text-xs text-green-400">Poin: ${userPoints}</p>
+                        </div>
+                    </div>
+                    <button onclick="redeemPointsModal()" class="mt-2 w-full text-left px-3 py-2 text-base font-medium text-yellow-400 hover:bg-gray-800 rounded-md"><i class="fa-solid fa-gift"></i> Tukar Poin</button>
+                    <button onclick="logout()" class="mt-2 w-full text-left px-3 py-2 text-base font-medium text-red-400 hover:bg-gray-800 rounded-md"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+                `;
+            } else {
+                authContainer.classList.remove('hidden');
+                userContainer.classList.add('hidden');
+                userContainer.classList.remove('flex');
+                loginPromo.style.display = 'block';
+                mobileAuth.innerHTML = `<button onclick="loginWithGoogle()" class="w-full text-left px-3 py-2 text-base font-medium text-white bg-primary rounded-md flex items-center gap-2"><i class="fa-brands fa-google"></i> Masuk dengan Google</button>`;
+            }
+            if(selectedGame) renderNominals(selectedGame);
+        }
+
+        // 3. Modal & Logic
+        function openModal(game) {
+            selectedGame = game;
+            selectedNominal = null;
+            selectedPaymentMethod = null;
+            document.getElementById('total-price').innerText = 'Rp 0';
+            document.getElementById('modal-game-title').innerHTML = `<img src="${game.img}" class="w-6 h-6 object-contain" onerror="this.style.display='none'"> ${game.name}`;
+            
+            const zoneIdInput = document.getElementById('zone-id');
+            if (game.category === 'pc' || game.category === 'app') {
+                zoneIdInput.style.display = 'none';
+                document.getElementById('user-id').placeholder = "Email / Username";
+            } else {
+                zoneIdInput.style.display = 'block';
+                document.getElementById('user-id').placeholder = "User ID";
+            }
+            renderNominals(game);
+            document.querySelectorAll('.payment-item').forEach(el => el.classList.remove('selected-payment'));
+            document.getElementById('order-modal').classList.remove('hidden');
+        }
+
+        function renderNominals(game) {
+            const container = document.getElementById('nominal-container');
+            container.innerHTML = '';
+            game.items.forEach((item, index) => {
+                const isMemberPrice = isLoggedIn;
+                // Simple logic: Members get discount based on tier later? 
+                // For now sticking to the provided memberPrice structure.
+                let displayPrice = isMemberPrice ? item.memberPrice : item.price;
+                
+                // Extra Tier Discount Logic (Optional visual)
+                if (isLoggedIn) {
+                   if (memberTier === 'Pro') displayPrice = displayPrice - 500;
+                   if (memberTier === 'Elite') displayPrice = displayPrice - 1000;
+                   if (memberTier === 'Sultan') displayPrice = displayPrice - 2000;
+                   if (memberTier === 'Gamers') displayPrice = displayPrice - 5000;
+                   // Ensure price doesn't drop below reasonable amount
+                   if (displayPrice < 1000) displayPrice = 1000;
+                }
+
+                const formattedPrice = new Intl.NumberFormat('id-ID').format(displayPrice);
+                
+                const div = document.createElement('div');
+                div.className = `p-3 border border-gray-700 rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition relative overflow-hidden ${selectedNominal === index ? 'selected-nominal' : ''}`;
+                div.onclick = () => selectNominal(index, displayPrice, div);
+
+                let priceHTML = isMemberPrice 
+                    ? `<p class="text-xs text-gray-500 line-through">Rp ${new Intl.NumberFormat('id-ID').format(item.price)}</p><p class="font-bold text-accent">Rp ${formattedPrice}</p><div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl-lg">PROMO</div>`
+                    : `<p class="font-bold text-accent">Rp ${formattedPrice}</p>`;
+                
+                div.innerHTML = `<h5 class="text-sm font-medium text-white mb-1">${item.name}</h5>${priceHTML}`;
+                container.appendChild(div);
+            });
+        }
+
+        function selectNominal(index, price, element) {
+            selectedNominal = index;
+            document.querySelectorAll('#nominal-container > div').forEach(el => el.classList.remove('selected-nominal'));
+            element.classList.add('selected-nominal');
+            document.getElementById('total-price').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
+        }
+
+        function selectPayment(element, method) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-item').forEach(el => el.classList.remove('selected-payment'));
+            element.classList.add('selected-payment');
+        }
+
+        function closeModal() {
+            document.getElementById('order-modal').classList.add('hidden');
+            selectedGame = null;
+        }
+
+        // 4. Payment Processing with Invoice & Points
+        function processPayment() {
+            const userId = document.getElementById('user-id').value;
+            if (!userId || selectedNominal === null || !selectedPaymentMethod) {
+                Swal.fire({icon: 'error', title: 'Data Belum Lengkap', text: 'Mohon lengkapi data pesanan!', background: '#1f2937', color: '#fff'});
+                return;
+            }
+
+            const item = selectedGame.items[selectedNominal];
+            // Calculate final price logic again to match render
+            let finalPrice = isLoggedIn ? item.memberPrice : item.price;
+             if (isLoggedIn) {
+                   if (memberTier === 'Pro') finalPrice = finalPrice - 500;
+                   if (memberTier === 'Elite') finalPrice = finalPrice - 1000;
+                   if (memberTier === 'Sultan') finalPrice = finalPrice - 2000;
+                   if (memberTier === 'Gamers') finalPrice = finalPrice - 5000;
+                   if (finalPrice < 1000) finalPrice = 1000;
+            }
+
+            const totalFmt = new Intl.NumberFormat('id-ID').format(finalPrice);
+
+            Swal.fire({
+                title: 'Konfirmasi Pembayaran',
+                html: `<div class="text-left text-sm"><p><strong>Item:</strong> ${item.name}</p><p><strong>ID:</strong> ${userId}</p><p><strong>Metode:</strong> ${selectedPaymentMethod}</p><hr class="my-2 border-gray-600"><p class="text-lg font-bold text-right text-primary">Total: Rp ${totalFmt}</p></div>`,
+                background: '#1f2937', color: '#fff',
+                showCancelButton: true, confirmButtonText: 'Bayar', confirmButtonColor: '#10b981'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Generate Random Invoice
+                    const randomNum = Math.floor(100000 + Math.random() * 900000);
+                    const invoiceID = `INV-${randomNum}`;
+                    
+                    // Add Points Logic (Example: 1 Point per 1000 Rupiah)
+                    let pointsEarned = 0;
+                    if (isLoggedIn) {
+                        pointsEarned = Math.floor(finalPrice / 1000);
+                        // Bonus points based on tier
+                        if (memberTier === 'Pro') pointsEarned += 5;
+                        if (memberTier === 'Elite') pointsEarned += 10;
+                        if (memberTier === 'Sultan') pointsEarned += 20;
+                        if (memberTier === 'Gamers') pointsEarned += 50;
+                        
+                        userPoints += pointsEarned;
+                        localStorage.setItem('userPoints', userPoints);
+                        updateUIForAuth();
+                    }
+
+                    // Save to Mock DB (LocalStorage)
+                    const transactionData = {
+                        invoice: invoiceID,
+                        item: `${item.name} - ${selectedGame.name}`,
+                        userid: userId,
+                        price: `Rp ${totalFmt}`,
+                        status: 'SUKSES',
+                        date: new Date().toLocaleString()
+                    };
+                    localStorage.setItem('last_trx', JSON.stringify(transactionData));
+
+                    // Show Success
+                    let msg = `Simpan Nomor Invoice ini:<br><strong class="text-3xl text-primary select-all">${invoiceID}</strong><br><br>Gunakan di menu Cek Transaksi.`;
+                    if(isLoggedIn) {
+                        msg += `<br><br><span class="text-yellow-400 font-bold">+${pointsEarned} Poin Reward!</span>`;
+                    }
+
+                    Swal.fire({
+                        title: 'Pembayaran Berhasil!',
+                        html: msg,
+                        icon: 'success', background: '#1f2937', color: '#fff'
+                    }).then(() => {
+                        closeModal();
+                        document.getElementById('topup-form').reset();
+                        document.getElementById('cek-transaksi').scrollIntoView({behavior: 'smooth'});
+                        document.getElementById('invoice-input').value = invoiceID;
+                    });
+                }
+            });
+        }
+
+        // 5. MEMBERSHIP LOGIC
+        function upgradeMember(tier, price) {
+            if (!isLoggedIn) {
+                Swal.fire({icon: 'warning', title: 'Login Dulu', text: 'Silakan login untuk upgrade membership.', background: '#1f2937', color: '#fff'});
+                return;
+            }
+
+            const priceFmt = new Intl.NumberFormat('id-ID').format(price);
+
+            Swal.fire({
+                title: `Upgrade ke ${tier}?`,
+                html: `Harga: <strong>Rp ${priceFmt}</strong><br>Nikmati diskon lebih besar dan keuntungan eksklusif!`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Beli Sekarang',
+                background: '#1f2937',
+                color: '#fff',
+                confirmButtonColor: '#f59e0b'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Pembayaran Sukses!',
+                        text: `Selamat! Anda sekarang adalah member ${tier}.`,
+                        icon: 'success',
+                        background: '#1f2937',
+                        color: '#fff'
+                    }).then(() => {
+                        memberTier = tier;
+                        localStorage.setItem('memberTier', tier);
+                        
+                        // Bonus instant points on upgrade
+                        if (tier === 'Pro') userPoints += 20;
+                        if (tier === 'Elite') userPoints += 50;
+                        if (tier === 'Sultan') userPoints += 150;
+                        if (tier === 'Gamers') userPoints += 500;
+                        localStorage.setItem('userPoints', userPoints);
+                        
+                        updateUIForAuth();
+                        document.getElementById('navbar').scrollIntoView({behavior: 'smooth'});
+                    });
+                }
+            });
+        }
+
+        // 6. POINTS REDEEM LOGIC
+        function redeemPointsModal() {
+            if (!isLoggedIn) return;
+
+            Swal.fire({
+                title: 'Tukar Poin',
+                html: `
+                    <div class="text-center mb-4">
+                        Poin Anda: <strong class="text-yellow-400 text-xl">${userPoints}</strong>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div onclick="redeemAction(50, 2000)" class="border border-gray-600 p-2 rounded cursor-pointer hover:bg-gray-700">
+                            <div class="font-bold text-white">Saldo Rp 2.000</div>
+                            <div class="text-yellow-400">50 Poin</div>
+                        </div>
+                        <div onclick="redeemAction(100, 5000)" class="border border-gray-600 p-2 rounded cursor-pointer hover:bg-gray-700">
+                            <div class="font-bold text-white">Saldo Rp 5.000</div>
+                            <div class="text-yellow-400">100 Poin</div>
+                        </div>
+                         <div onclick="redeemAction(200, 10000)" class="border border-gray-600 p-2 rounded cursor-pointer hover:bg-gray-700">
+                            <div class="font-bold text-white">Saldo Rp 10.000</div>
+                            <div class="text-yellow-400">200 Poin</div>
+                        </div>
+                         <div onclick="redeemAction(500, 25000)" class="border border-gray-600 p-2 rounded cursor-pointer hover:bg-gray-700">
+                            <div class="font-bold text-white">Saldo Rp 25.000</div>
+                            <div class="text-yellow-400">500 Poin</div>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: false,
+                background: '#1f2937',
+                color: '#fff',
+                showCloseButton: true
+            });
+        }
+
+        // Expose to window for Swal HTML onclick
+        window.redeemAction = function(cost, rewardValue) {
+            if (userPoints >= cost) {
+                userPoints -= cost;
+                localStorage.setItem('userPoints', userPoints);
+                updateUIForAuth();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: `Poin ditukar dengan Saldo Rp ${new Intl.NumberFormat('id-ID').format(rewardValue)}`,
+                    background: '#1f2937',
+                    color: '#fff',
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Poin tidak cukup!',
+                    background: '#1f2937',
+                    color: '#fff'
+                });
+            }
+        };
+
+        // 7. Check Transaction Logic
+        function checkTransaction() {
+            const input = document.getElementById('invoice-input').value.trim();
+            const resultBox = document.getElementById('transaction-result');
+            
+            if (!input) {
+                Swal.fire({icon: 'warning', title: 'Oops', text: 'Masukkan nomor invoice dulu!', background: '#1f2937', color: '#fff'});
+                return;
+            }
+
+            Swal.fire({
+                title: 'Mencari Data...',
+                timer: 800,
+                didOpen: () => Swal.showLoading(),
+                background: '#1f2937', color: '#fff'
+            }).then(() => {
+                const savedTrx = localStorage.getItem('last_trx');
+                let data = savedTrx ? JSON.parse(savedTrx) : null;
+
+                if (data && data.invoice === input) {
+                    document.getElementById('res-invoice').innerText = data.invoice;
+                    document.getElementById('res-item').innerText = data.item;
+                    document.getElementById('res-userid').innerText = data.userid;
+                    document.getElementById('res-total').innerText = data.price;
+                    
+                    const statusEl = document.getElementById('res-status');
+                    statusEl.innerText = data.status;
+                    statusEl.className = "px-2 py-0.5 rounded text-xs font-bold bg-green-900 text-green-300";
+                    
+                    resultBox.classList.remove('hidden');
+                    Swal.fire({icon: 'success', title: 'Data Ditemukan', showConfirmButton: false, timer: 1000, background: '#1f2937', color: '#fff'});
+                } else {
+                    resultBox.classList.add('hidden');
+                    Swal.fire({
+                        icon: 'error', 
+                        title: 'Tidak Ditemukan', 
+                        text: 'Nomor Invoice tidak terdaftar atau salah input.', 
+                        background: '#1f2937', color: '#fff'
+                    });
+                }
+            });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGames();
+        });
+
+    </script>
+</body>
+</html>
